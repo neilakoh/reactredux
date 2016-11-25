@@ -1,12 +1,13 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as courseAction from './action/courseAction';
+import {bindActionCreators} from 'redux';
 
 class Courses extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      course: {title: null}
+      course: {title: ""}
     };
 
     // THIS THE RECOMMENDED WAY TO BIND AN ACTION TO AVOID PERFORMANCE ISSUE
@@ -22,7 +23,8 @@ class Courses extends React.Component {
 
   onClickSave() {
     // alert(`Success: ${this.state.course.title}`);
-    this.props.dispatch(courseAction.createCourse(this.state.course));
+    // 3. USE THE ACTION METHOD
+    this.props.actions.createCourse(this.state.course);
   }
 
   courseList(course, index) {
@@ -42,7 +44,8 @@ class Courses extends React.Component {
 }
 
 Courses.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  // 2. VALIDATE THE ACTION
+  actions: PropTypes.object.isRequired,
   courses: PropTypes.array.isRequired
 };
 
@@ -52,4 +55,11 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(Courses);
+// 1. BIND THE ACTION FIRST
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(courseAction, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Courses);
